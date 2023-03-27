@@ -1,20 +1,51 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 int extraMemoryAllocated;
 
 // implement merge sort
 // extraMemoryAllocated counts bytes of extra memory allocated
+
+
 void mergeSort(int pData[], int l, int r)
 {
-	if(l < r){
-
-        int mid = l + (r - 1)/2;
-
+	if (l < r) {
+		
+        int mid = l + (r - l) / 2;
         mergeSort(pData, l, mid);
         mergeSort(pData, mid + 1, r);
-        merge(pData, l, mid, r);
+
+        int i = l, j = mid + 1, k = 0;
+        int temp[r - l + 1]; 
+
+        while (i <= mid && j <= r) {
+            if (pData[i] <= pData[j]) {
+                temp[k] = pData[i];
+                i++;
+            } else {
+                temp[k] = pData[j];
+                j++;
+            }
+            k++;
+        }
+
+        while (i <= mid) {
+            temp[k] = pData[i];
+            i++;
+            k++;
+        }
+
+        while (j <= r) {
+            temp[k] = pData[j];
+            j++;
+            k++;
+        }
+		    
+        for (i = l, k = 0; i <= r; i++, k++) {
+            pData[i] = temp[k];
+        }
     }
 }
 
@@ -43,12 +74,12 @@ void insertionSort(int* pData, int n)
 // extraMemoryAllocated counts bytes of extra memory allocated
 void bubbleSort(int* pData, int n)
 {
-	int  i, j;
+	int  i, j, item;
     for(i = 0; i < n-1; i++){                            
         for(j = 0; j < n-i-1; i++){
             if(pData[j] > pData[j+1]){
 
-                int item = pData[j];
+                item = pData[j];
                 pData[j] = pData[j + 1];
                 pData[j + 1] = item;
                 
@@ -69,17 +100,17 @@ void selectionSort(int* pData, int n)
         for(j = i +1; j < n; j++){
             if (pData[j] < pData[min_idx]){
                 min_idx =j;
+			}
+		}
+			if( min_idx != i){                       
 
                 temp = pData[i];
                 pData[i] = pData[min_idx];
                 pData[min_idx] = temp;
-            }
-        }
+			}
     }
-
-	
 }
-
+    
 // parses input file to an integer array
 int parseData(char *inputFileName, int **ppData)
 {
@@ -92,7 +123,10 @@ int parseData(char *inputFileName, int **ppData)
 		fscanf(inFile,"%d\n",&dataSz);
 		*ppData = (int *)malloc(sizeof(int) * dataSz);
 		// Implement parse data block
-		
+		int i;
+		for( i = 0; i < dataSz; i++){
+			fscanf(inFile, "%d", &((*ppData)[i]));
+		}
 	}
 	
 	return dataSz;
